@@ -68,3 +68,17 @@ class BookmarkFolder:
             else:
                 folder.children.append(Bookmark.from_dict(child))
         return folder
+
+    def find_by_id(self, item_id: str) -> Optional["BookmarkFolder | Bookmark"]:
+        """Recursively search for a bookmark or folder by its ID.
+
+        Returns the matching item, or None if not found.
+        """
+        for child in self.children:
+            if child.id == item_id:
+                return child
+            if isinstance(child, BookmarkFolder):
+                result = child.find_by_id(item_id)
+                if result is not None:
+                    return result
+        return None
