@@ -39,6 +39,16 @@ def test_format_results_multiple():
     assert "https://b.com" in output
 
 
+def test_format_results_nested_path():
+    """Ensure deeply nested folder paths are rendered correctly in output."""
+    bm = Bookmark(title="Docs", url="https://docs.example.com")
+    result = SearchResult(bookmark=bm, path=["Work", "Projects", "Alpha"])
+    output = _format_results([result])
+    assert "Work" in output
+    assert "Projects" in output
+    assert "Alpha" in output
+
+
 def _make_args(**kwargs) -> argparse.Namespace:
     defaults = dict(snapshot="snap1", query="github", case_sensitive=False, snapshot_dir=None)
     defaults.update(kwargs)
@@ -64,6 +74,19 @@ def test_cmd_search_snapshot_not_found(capsys):
     assert code == 1
     captured = capsys.readouterr()
     assert "Error" in captured.err
+
+
+def test_cmd_search_custom_snapshot_dir(tmp_path):
+    """Verify that a custom snapshot_dir is forwarded to load_snapshot."""
+    root = BookmarkFolder(name="root")
+    root.children = []
+
+    with patch("snapmark.cli_search.load_snapshot", return_value=root) as mock_load:
+        args = _make_args(snapshot_dir=str(tmp_path))
+        code = cmd_search(args)
+
+    assert code == 0
+    mock_load.assert_called_once_with("snap1", snapshot_dir=str(tmp_path))
 
 
 def test_add_search_subparser_registers_command():
