@@ -79,6 +79,15 @@ def test_cmd_rename_missing_snapshot_exits(snapshot_dir, capsys):
         cmd_rename(args)
 
 
+def test_cmd_rename_nested_bookmark(snapshot_dir, saved_snapshot, capsys):
+    """Renaming a bookmark nested inside a folder should succeed."""
+    args = _make_args(snapshot_dir=snapshot_dir, old_title="Jira", new_title="Jira Cloud", output="nested_renamed")
+    cmd_rename(args)
+    assert (snapshot_dir / "nested_renamed.json").exists()
+    out = capsys.readouterr().out
+    assert "nested_renamed" in out
+
+
 def test_add_rename_subparser_registers_command():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
