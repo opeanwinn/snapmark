@@ -55,7 +55,15 @@ def export_to_json(folder: BookmarkFolder, output_path: Path) -> None:
     Args:
         folder: The root BookmarkFolder to export.
         output_path: Destination file path.
+
+    Raises:
+        TypeError: If folder is not a BookmarkFolder instance.
+        OSError: If the file cannot be written.
     """
+    if not isinstance(folder, BookmarkFolder):
+        raise TypeError(
+            f"Expected a BookmarkFolder, got {type(folder).__name__}."
+        )
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", encoding="utf-8") as fh:
