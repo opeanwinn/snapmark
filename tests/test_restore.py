@@ -79,3 +79,16 @@ class TestExportToJson:
         export_to_json(sample_tree, out)
         data = json.loads(out.read_text(encoding="utf-8"))
         assert data["title"] == sample_tree.title
+
+    def test_exported_children_count_matches(self, sample_tree, tmp_path):
+        """Verify that the exported JSON preserves the number of top-level children."""
+        out = tmp_path / "tree.json"
+        export_to_json(sample_tree, out)
+        data = json.loads(out.read_text(encoding="utf-8"))
+        assert len(data["children"]) == len(sample_tree.children)
+
+    def test_creates_parent_directories(self, sample_tree, tmp_path):
+        """Verify that export_to_json creates missing parent directories."""
+        out = tmp_path / "nested" / "deep" / "tree.json"
+        export_to_json(sample_tree, out)
+        assert out.exists()
