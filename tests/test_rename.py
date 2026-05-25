@@ -80,3 +80,9 @@ def test_original_tree_unchanged(sample_tree):
     original_titles = [c.title for c in sample_tree.children]
     rename_tree(sample_tree, "GitHub", "GitHub Mirror")
     assert [c.title for c in sample_tree.children] == original_titles
+
+
+def test_renamed_items_contains_new_title(sample_tree):
+    """Ensure renamed_items records the new title for each renamed entry."""
+    _, result = rename_tree(sample_tree, "Python Docs", "Python Documentation")
+    assert all(item == "Python Documentation" for item in result.renamed_items)
