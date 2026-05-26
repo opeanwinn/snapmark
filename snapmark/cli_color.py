@@ -31,6 +31,13 @@ def cmd_color(args: argparse.Namespace) -> None:
             tags = ", ".join(bm.tags or [])
             print(f"  [colored] {bm.title} — {bm.url}  tags=[{tags}]")
 
+    if result.skipped and not args.overwrite:
+        print(
+            f"Hint: {len(result.skipped)} bookmark(s) already had a color tag and were "
+            "skipped. Use --overwrite to replace existing color tags.",
+            file=sys.stderr,
+        )
+
 
 def add_color_subparser(subparsers: argparse._SubParsersAction) -> None:
     parser = subparsers.add_parser(
